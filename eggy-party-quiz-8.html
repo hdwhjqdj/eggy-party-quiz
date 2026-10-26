@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a0d12">
+<title>测测你是蛋仔派对里的哪只蛋</title>
+<style>
+  :root{
+    --bg:#1a0d12;
+    --bg2:#2a1520;
+    --ink:#f4e0c8;
+    --ink2:#d4b896;
+    --muted:#8a6870;
+    --rule:#4a2030;
+    --accent:#a01525;
+    --accent2:#c82030;
+    --deep:#7a0e18;
+    --gold:#b8873a;
+    --gold2:#e0b847;
+    --tint:#3a1a25;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0; padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Songti SC","Noto Serif SC","Georgia","SimSun",serif;
+    font-size:16px; line-height:1.7; -webkit-font-smoothing:antialiased;
+    overscroll-behavior-y:contain;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(600px 500px at 88% -6%, rgba(224,184,71,.10), transparent 60%),
+      radial-gradient(800px 600px at -10% 42%, rgba(160,21,37,.14), transparent 60%),
+      radial-gradient(900px 700px at 50% 112%, rgba(122,14,24,.18), transparent 60%),
+      radial-gradient(300px 300px at 50% 50%, rgba(184,135,58,.06), transparent 70%);
+  }
+  body::after{
+    content:"⚜️ 🖤 ⚜️ 🥚 ⚜️ 🖤";
+    position:fixed; bottom:0; left:0; right:0; z-index:0; pointer-events:none;
+    font-size:36px; color:rgba(184,135,58,.07); letter-spacing:32px; font-weight:700;
+    overflow:hidden; white-space:nowrap;
+  }
+  [hidden]{display:none !important}
+  button{font-family:inherit; font-size:inherit; color:inherit; border:none; background:none; cursor:pointer; touch-action:manipulation}
+  .app{max-width:520px; margin:0 auto; background:transparent; min-height:100vh; min-height:100svh; position:relative; z-index:1}
+  .screen{min-height:100vh; min-height:100svh; display:flex; flex-direction:column}
+
+  /* ---------- 封面 ---------- */
+  #s-cover{padding:calc(34px + env(safe-area-inset-top)) 22px calc(26px + env(safe-area-inset-bottom)); position:relative}
+  #s-cover::before{
+    content:"⚜️"; position:absolute; top:calc(44px + env(safe-area-inset-top)); left:18px;
+    font-size:22px; color:var(--gold); z-index:3; opacity:.6;
+  }
+  #s-cover::after{
+    content:"⚜️"; position:absolute; top:calc(44px + env(safe-area-inset-top)); right:18px;
+    font-size:22px; color:var(--gold); z-index:3; opacity:.6;
+  }
+  #s-cover>div{
+    display:flex; flex-direction:column; flex:1; min-height:0; position:relative; z-index:2;
+    border:2px solid var(--gold); border-radius:6px; padding:28px 20px 22px;
+    background:linear-gradient(180deg, rgba(42,21,32,.85), rgba(26,13,18,.92));
+    box-shadow:0 0 0 1px var(--deep), 0 0 0 3px var(--bg), 0 20px 60px rgba(0,0,0,.6);
+    position:relative;
+  }
+  #s-cover>div::before{
+    content:""; position:absolute; top:4px; left:4px; right:4px; bottom:4px;
+    border:1px solid rgba(184,135,58,.25); border-radius:4px; pointer-events:none;
+  }
+  .kicker{font-size:11px; letter-spacing:.32em; color:var(--gold2); font-weight:700; text-transform:uppercase; border-bottom:1px solid var(--rule); padding-bottom:10px}
+  .cover-mid{flex:1; display:flex; flex-direction:column; justify-content:center; padding:24px 0}
+  .cover-title{
+    font-size:44px; line-height:1.15; font-weight:900; letter-spacing:-1px; margin:16px 0 10px;
+    background:linear-gradient(135deg, var(--gold) 0%, var(--gold2) 45%, #fff 70%, var(--gold2) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 2px 8px rgba(224,184,71,.3));
+  }
+  .cover-sub{font-size:17px; color:var(--ink2); font-weight:600; margin:0 0 16px; font-style:italic; letter-spacing:.05em}
+  .cover-desc{font-size:14px; color:var(--muted); margin:0 0 22px; max-width:400px; line-height:1.8; border-left:2px solid var(--gold); padding-left:14px}
+  .facts{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:26px}
+  .fact{
+    background:linear-gradient(180deg, var(--tint), var(--bg2));
+    border:1px solid var(--gold); border-radius:0; padding:6px 14px;
+    font-size:12px; color:var(--ink2); letter-spacing:.05em;
+    box-shadow:inset 0 0 0 1px var(--deep);
+  }
+  .fact b{color:var(--gold2); font-weight:800}
+  .btn{display:flex; align-items:center; justify-content:center; width:100%; min-height:58px; border-radius:4px; font-size:16px; font-weight:800; letter-spacing:.15em; transition:transform .12s ease, box-shadow .2s ease; position:relative; overflow:hidden}
+  .btn:active{transform:scale(.985)}
+  .btn-primary{
+    background:linear-gradient(135deg, var(--deep) 0%, var(--accent) 50%, var(--deep) 100%);
+    color:var(--gold2); border:2px solid var(--gold);
+    box-shadow:0 8px 28px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1), inset 0 0 0 4px var(--bg);
+  }
+  .btn-primary::before{content:"⚜️ "; margin-right:4px; font-size:14px}
+  .btn-primary::after{content:""; position:absolute; inset:0; background:linear-gradient(120deg, transparent 30%, rgba(224,184,71,.18) 50%, transparent 70%); pointer-events:none; animation:shine 3s infinite}
+  @keyframes shine{0%{opacity:.2} 50%{opacity:.7} 100%{opacity:.2}}
+  .cover-note{font-size:11px; color:var(--muted); text-align:center; margin:14px 0 0; line-height:1.8; letter-spacing:.08em; border-top:1px solid var(--rule); padding-top:12px}
+  .deco{position:absolute; pointer-events:none; user-select:none; opacity:.5; z-index:3; color:var(--gold)}
+  .deco-1{top:calc(60px + env(safe-area-inset-top)); right:32px; font-size:28px; transform:rotate(15deg); color:var(--gold2); text-shadow:0 0 12px rgba(224,184,71,.4)}
+  .deco-2{top:140px; left:28px; font-size:18px; opacity:.5; color:var(--accent2)}
+  .deco-3{bottom:170px; right:38px; font-size:24px; opacity:.55; transform:rotate(-10deg)}
+  .deco-4{top:280px; left:50px; font-size:16px; opacity:.4; color:var(--gold2)}
+  .deco-5{bottom:100px; left:40px; font-size:22px; opacity:.5}
+  .deco-6{top:200px; right:50px; font-size:14px; opacity:.5; color:var(--accent)}
+
+  /* ---------- 答题 ---------- */
+  .qbar{
+    position:sticky; top:0; z-index:5;
+    background:rgba(26,13,18,.95); backdrop-filter:blur(8px);
+    padding:calc(12px + env(safe-area-inset-top)) 18px 10px;
+    border-bottom:2px solid var(--gold); box-shadow:0 4px 20px rgba(0,0,0,.6);
+  }
+  .qbar-row{display:flex; align-items:center; gap:12px}
+  .iconbtn{
+    width:36px; height:36px; border-radius:0; border:1px solid var(--gold);
+    background:var(--bg2); display:flex; align-items:center; justify-content:center;
+    font-size:17px; color:var(--gold2); font-weight:700;
+    box-shadow:inset 0 0 0 1px var(--deep);
+  }
+  .iconbtn:disabled{opacity:.3}
+  .qmeta{flex:1}
+  .qcount{display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-bottom:6px; letter-spacing:.1em}
+  .qcount b{color:var(--gold2); font-weight:800}
+  .pbar{
+    height:8px; background:var(--bg2); border-radius:2px; overflow:hidden;
+    box-shadow:inset 0 1px 3px rgba(0,0,0,.6), 0 0 0 1px var(--rule);
+  }
+  .pbar i{
+    display:block; height:100%; width:0; border-radius:1px;
+    background:linear-gradient(90deg, var(--deep) 0%, var(--accent) 50%, var(--gold) 100%);
+    box-shadow:0 0 12px rgba(160,21,37,.6);
+    transition:width .32s cubic-bezier(.2,.8,.2,1);
+    position:relative;
+  }
+  .pbar i::after{content:""; position:absolute; right:0; top:0; bottom:0; width:14px; background:linear-gradient(90deg, transparent, rgba(224,184,71,.7)); border-radius:1px; animation:shine 2s infinite}
+  .qbody{flex:1; padding:30px 22px calc(30px + env(safe-area-inset-bottom)); display:flex; flex-direction:column}
+  .qno{font-size:11px; letter-spacing:.3em; color:var(--gold); font-weight:800; margin-bottom:14px; text-transform:uppercase}
+  .qno::before{content:"⚜️ "; font-size:10px; color:var(--gold2)}
+  .qtext{
+    font-size:22px; line-height:1.5; font-weight:700; letter-spacing:-.3px; margin:0 0 8px;
+    color:var(--ink); position:relative; padding-left:16px;
+  }
+  .qtext::before{content:""; position:absolute; left:0; top:6px; bottom:6px; width:3px; background:linear-gradient(180deg, var(--gold), var(--accent)); border-radius:1px}
+  .hint{font-size:12px; color:var(--muted); margin:0 0 26px; letter-spacing:.05em; font-style:italic}
+  .opts{display:flex; flex-direction:column; gap:12px}
+  .opt{
+    background:linear-gradient(180deg, var(--bg2), var(--tint));
+    border:1.5px solid var(--rule); border-radius:2px; padding:16px 18px;
+    text-align:left; font-size:15px; line-height:1.65; min-height:58px; display:flex; align-items:center;
+    transition:border-color .16s, background .16s, transform .1s, box-shadow .16s;
+    box-shadow:inset 0 0 0 1px var(--rule);
+  }
+  .opt:active{transform:scale(.99); background:var(--tint)}
+  .opt.on{
+    border-color:var(--gold); background:linear-gradient(180deg, #3a1a25, #2a1520);
+    box-shadow:inset 0 0 0 1px var(--gold), 0 0 16px rgba(184,135,58,.3);
+  }
+  .opt .dot{width:8px; height:8px; border-radius:50%; background:var(--rule); margin-right:14px; flex:none; transition:background .16s}
+  .opt.on .dot{
+    background:var(--gold2); box-shadow:0 0 0 3px rgba(224,184,71,.25), 0 0 0 6px rgba(160,21,37,.35);
+    animation:pulse 1.2s infinite;
+  }
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(224,184,71,.25), 0 0 0 6px rgba(160,21,37,.35)} 50%{box-shadow:0 0 0 4px rgba(224,184,71,.4), 0 0 0 8px rgba(160,21,37,.55)}}
+  .qfoot{margin-top:auto; padding-top:22px; font-size:11px; color:var(--muted); letter-spacing:.05em}
+
+  /* ---------- 加载 ---------- */
+  #loading{position:fixed; inset:0; background:var(--bg); z-index:40; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px}
+  .spinner{width:38px; height:38px; border:3px solid var(--rule); border-top-color:var(--gold); border-radius:50%; animation:spin .8s linear infinite; box-shadow:0 0 0 3px rgba(184,135,58,.2)}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #loading p{font-size:13px; color:var(--gold2); margin:0; letter-spacing:.1em; font-weight:700}
+  #loading p::before{content:"⚜️ "; margin-right:2px}
+
+  /* ---------- 结果 ---------- */
+  #s-result{padding:0 0 calc(34px + env(safe-area-inset-bottom))}
+  .res-top{padding:calc(16px + env(safe-area-inset-top)) 18px 10px; display:flex; justify-content:space-between; align-items:center}
+  .res-brand{font-size:11px; letter-spacing:.24em; color:var(--gold); font-weight:800; text-transform:uppercase}
+  .res-brand::before{content:"⚜️ "; font-size:10px; color:var(--gold2)}
+  .hero{
+    margin:6px 18px 0; border-radius:4px; padding:28px 22px 22px;
+    border:2px solid var(--gold); box-shadow:0 20px 60px rgba(0,0,0,.6), inset 0 0 0 1px var(--gold);
+    position:relative; overflow:hidden;
+  }
+  .hero::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg, transparent, var(--gold2) 50%, transparent);
+  }
+  .hero::after{
+    content:"⚜️"; position:absolute; top:14px; right:18px;
+    font-size:18px; opacity:.45; color:var(--gold); text-shadow:0 0 10px rgba(224,184,71,.4);
+  }
+  .hero.t-hei{background:linear-gradient(160deg, #1a0a0e, #2a1018); --deep:#1a0a0e}
+  .hero.t-ji{background:linear-gradient(160deg, #1a1510, #2a2018); --deep:#1a1510}
+  .hero.t-zai{background:linear-gradient(160deg, #101a14, #1a2a20); --deep:#101a14}
+  .hero.t-huang{background:linear-gradient(160deg, #1a1810, #2a2418); --deep:#1a1810}
+  .hero .you{font-size:11px; letter-spacing:.28em; color:var(--gold); font-weight:800; text-transform:uppercase}
+  .hero h1{
+    font-size:40px; line-height:1.15; font-weight:900; letter-spacing:-1px; margin:10px 0 10px;
+    background:linear-gradient(135deg, var(--gold) 0%, var(--gold2) 50%, #fff 80%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero .role-emoji{font-size:32px; margin-right:6px}
+  .hero .quote{font-family:"Songti SC","Noto Serif SC",serif; font-size:17px; line-height:1.6; margin:0 0 18px; color:var(--ink2); font-weight:500; font-style:italic}
+  .hero .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; border-top:1px solid var(--rule); padding-top:14px}
+  .hero .stat .v{font-size:24px; font-weight:900; letter-spacing:-.6px; color:var(--gold2); line-height:1.2}
+  .hero .stat .v small{font-size:11px; font-weight:600; color:var(--muted); margin-left:2px}
+  .hero .stat .k{font-size:11px; color:var(--muted); margin-top:3px; line-height:1.4; letter-spacing:.05em}
+  .savehint{font-size:11px; color:var(--muted); margin:12px 0 0; display:flex; align-items:center; gap:6px; letter-spacing:.05em}
+
+  .sec{
+    margin:16px 18px 0;
+    background:linear-gradient(180deg, var(--bg2), var(--tint));
+    border:1px solid var(--gold); border-radius:4px; padding:20px 18px;
+    box-shadow:0 6px 20px rgba(0,0,0,.5), inset 0 0 0 1px var(--deep);
+    transition:transform .18s, box-shadow .18s;
+  }
+  .sec:hover{transform:translateY(-2px); box-shadow:0 12px 30px rgba(0,0,0,.6), inset 0 0 0 1px var(--gold)}
+  .sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:12px}
+  .sec-h h2{font-size:16px; font-weight:800; margin:0; letter-spacing:-.2px; color:var(--ink); border-bottom:1px solid var(--rule); padding-bottom:6px; flex:1}
+  .sec-h .tag{font-size:10px; letter-spacing:.16em; color:var(--gold); font-weight:800; border:1px solid var(--gold); padding:2px 8px; background:var(--bg); white-space:nowrap}
+  .lead{font-size:14px; color:var(--muted); margin:0 0 14px; line-height:1.7}
+  .need{font-size:13px; color:var(--muted); margin:0 0 4px}
+  .need b{color:var(--ink2); font-weight:600}
+
+  .bars{display:flex; flex-direction:column; gap:13px}
+  .bar-row{display:grid; grid-template-columns:70px 1fr 34px; align-items:center; gap:10px}
+  .bar-row .lb{font-size:12px; color:var(--ink2); font-weight:600}
+  .bar-row .track{display:block; height:9px; background:var(--bg); border-radius:1px; overflow:hidden; box-shadow:inset 0 1px 2px rgba(0,0,0,.6)}
+  .bar-row .fill{display:block; height:100%; width:0; border-radius:1px; background:var(--rule); transition:width .9s cubic-bezier(.2,.8,.2,1)}
+  .bar-row.low .fill{background:linear-gradient(90deg, var(--accent), var(--accent2))}
+  .bar-row.high .fill{background:linear-gradient(90deg, var(--gold), var(--gold2))}
+  .bar-row .val{font-size:13px; font-weight:800; text-align:right; color:var(--muted); font-variant-numeric:tabular-nums}
+  .bar-row.low .val{color:var(--accent2)}
+  .bar-row.high .val{color:var(--gold2)}
+  .chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:14px}
+  .chip{font-size:11px; padding:4px 10px; border-radius:0; border:1px solid; font-weight:700; letter-spacing:.05em}
+  .chip.low{color:var(--accent2); border-color:var(--accent); background:rgba(160,21,37,.15)}
+  .chip.high{color:var(--gold2); border-color:var(--gold); background:rgba(184,135,58,.12)}
+
+  .scenes{margin:12px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px}
+  .scenes li{font-size:13.5px; color:var(--ink2); background:var(--bg); border-radius:2px; padding:10px 14px; line-height:1.6; border:1px solid var(--rule)}
+  .scenes li::before{content:"⚜️ "; font-size:10px; letter-spacing:.1em; color:var(--gold); font-weight:700; margin-right:4px}
+
+  .accel{counter-reset:a; margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:14px}
+  .accel li{position:relative; padding-left:40px; font-size:15px; line-height:1.7; color:var(--ink2)}
+  .accel li::before{
+    counter-increment:a; content:"⚜️" counter(a);
+    position:absolute; left:0; top:-2px; width:32px; height:32px; border-radius:0;
+    background:linear-gradient(135deg, var(--deep), var(--accent));
+    color:var(--gold2); font-size:12px; font-weight:900; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 8px rgba(160,21,37,.5), inset 0 0 0 1px var(--gold);
+  }
+
+  .say{margin-top:16px; background:var(--bg); border-radius:2px; padding:14px 16px; border:1px solid var(--gold); box-shadow:inset 0 0 0 1px var(--deep)}
+  .say .k{font-size:10px; letter-spacing:.2em; color:var(--gold); font-weight:800; margin-bottom:6px; text-transform:uppercase}
+  .say p{margin:0; font-size:15px; line-height:1.65}
+
+  .btn-copy{
+    display:flex; align-items:center; justify-content:center; width:100%; min-height:52px; border-radius:4px; font-size:14px; font-weight:700;
+    color:var(--gold2); background:linear-gradient(135deg, var(--deep), var(--accent));
+    border:2px solid var(--gold); margin-top:16px; letter-spacing:.1em;
+    box-shadow:0 8px 24px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08);
+    transition:transform .12s, box-shadow .16s;
+  }
+  .btn-copy:active{transform:scale(.98); box-shadow:0 4px 14px rgba(0,0,0,.4)}
+  .btn-copy::before{content:"⚜️ "; margin-right:4px}
+
+  .restart{margin:16px auto 0; font-size:13px; color:var(--gold2); text-decoration:underline; text-underline-offset:3px; font-weight:600; letter-spacing:.05em}
+  .disclaimer{font-size:11px; line-height:1.8; color:var(--muted); text-align:left; border-top:1px solid var(--rule); padding-top:14px; margin:0; letter-spacing:.05em}
+
+  #toast{position:fixed; left:50%; bottom:34px; transform:translate(-50%,16px); background:linear-gradient(135deg, var(--deep), var(--accent)); color:var(--gold2); font-size:13px; padding:10px 18px; border-radius:2px; opacity:0; pointer-events:none; transition:opacity .22s, transform .22s; z-index:60; max-width:86vw; text-align:center; letter-spacing:.05em; border:1px solid var(--gold); box-shadow:0 8px 24px rgba(0,0,0,.6)}
+  #toast.show{opacity:1; transform:translate(-50%,0)}
+
+  @media (max-width: 380px){
+    .cover-title{font-size:36px}
+    .qtext{font-size:20px}
+    .hero h1{font-size:32px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <section id="s-cover" class="screen">
+    <span class="deco deco-1">⚜️</span>
+    <span class="deco deco-2">🖤</span>
+    <span class="deco deco-3">🥚</span>
+    <span class="deco deco-4">👑</span>
+    <span class="deco deco-5">⚜️</span>
+    <span class="deco deco-6">🖤</span>
+    <div>
+      <div class="kicker">Egggy Party · 粉丝趣味测试 · 非官方</div>
+      <div class="cover-mid">
+        <h1 class="cover-title">你是<br>哪只蛋？</h1>
+        <p class="cover-sub">⚜️ 蛋仔派对性格原型测试 ⚜️</p>
+        <p class="cover-desc">18 道情境题，测出你在那个圆滚滚的世界里究竟是谁。不是看你玩得好不好，是看你骨子里是什么样的蛋。</p>
+        <div class="facts">
+          <div class="fact"><b>18</b> 题</div>
+          <div class="fact">约 <b>3</b> 分钟</div>
+          <div class="fact"><b>4</b> 种蛋格</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="startBtn">开启蛋格鉴定</button>
+      <p class="cover-note">按第一反应选。不收集任何信息。<br>本测试为粉丝创作，与网易蛋仔派对官方无关。</p>
+    </div>
+  </section>
+
+  <section id="s-quiz" class="screen" hidden>
+    <div class="qbar">
+      <div class="qbar-row">
+        <button class="iconbtn" id="backBtn" aria-label="上一题" disabled>←</button>
+        <div class="qmeta">
+          <div class="qcount"><span>第 <b id="qNow">1</b> / 18 题</span><span id="qPct">0%</span></div>
+          <div class="pbar"><i id="pFill"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="qbody">
+      <div class="qno" id="qNo">Q01</div>
+      <h2 class="qtext" id="qText">　</h2>
+      <p class="hint">凭第一感觉，不用想太深</p>
+      <div class="opts" id="opts"></div>
+      <div class="qfoot">可以点左上角返回上一题修改。</div>
+    </div>
+  </section>
+
+  <section id="s-result" class="screen" hidden>
+    <div class="res-top">
+      <span class="res-brand">Egggy Party Archetype</span>
+      <span class="res-brand" id="resDate"></span>
+    </div>
+    <div id="result"></div>
+    <div class="res-foot" style="padding:22px 22px 0; text-align:center">
+      <button class="restart" id="restartBtn">重新鉴定</button>
+    </div>
+  </section>
+
+</div>
+
+<div id="loading" hidden>
+  <div class="spinner"></div>
+  <p>正在解析你的蛋格…</p>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+var CONFIG = {
+  fullUrl: "eggy-party-quiz.html"
+};
+
+/* ---------------- 题库 ---------------- */
+var QUESTIONS = [
+  { dim:"surprise", axis:"b", text:"你正在一条熟悉的赛道上跑，突然有人从侧翼窜出来把你挤飞了——你的第一反应是？", options:[
+    { text:"立刻复盘他的切入角度，下次我也这么干", score:2 },
+    { text:"先懵一下，然后继续追", score:1 },
+    { text:"这把算我倒霉吧", score:0 }
+  ]},
+  { dim:"heartbeat", axis:"b", text:"巅峰排位连跪三把，你的状态大概是？", options:[
+    { text:"再来一把，把场子找回来", score:2 },
+    { text:"歇一会，喝点水再说", score:1 },
+    { text:"算了不玩了，影响心情", score:0 }
+  ]},
+  { dim:"crew", axis:"b", text:"一个人刷地图 和 跟朋友组队玩——哪个更让你开心？", options:[
+    { text:"组队，一个人玩多没意思", score:2 },
+    { text:"看心情，各有各的好", score:1 },
+    { text:"一个人，不用迁就别人", score:0 }
+  ]},
+  { dim:"hidden", axis:"b", text:"你觉得现实中的你和蛋仔里的你，差别大吗？", options:[
+    { text:"挺不一样的，蛋仔里的我更放得开", score:2 },
+    { text:"差不多，都是我", score:1 },
+    { text:"没什么区别，性格不会变", score:0 }
+  ]},
+  { dim:null, axis:"e", text:"夜深人静刷着蛋仔，你对自己是个什么样的蛋——有定义吗？", options:[
+    { text:"有，我知道我在蛋仔世界里是什么角色", score:2 },
+    { text:"大概有感觉，但说不清", score:1 },
+    { text:"没想过这个问题", score:0 }
+  ]},
+  { dim:null, axis:"e", text:"别人喊你「某蛋」，你会觉得？", options:[
+    { text:"挺好玩的，有点归属感", score:2 },
+    { text:"无所谓，一个称呼而已", score:1 },
+    { text:"不太喜欢被贴上标签", score:0 }
+  ]},
+  { dim:null, axis:"e", text:"你觉得自己是「好玩」的蛋吗？", options:[
+    { text:"是，而且有自己的风格", score:2 },
+    { text:"还行吧，正常水平", score:1 },
+    { text:"不知道，可能不太好玩", score:0 }
+  ]},
+  { dim:null, axis:"e", text:"如果可以跟蛋仔派对里的一个角色互换身份，你选？", options:[
+    { text:"找那个跟我最像的，不管他火不火", score:2 },
+    { text:"选个皮肤好看的就行", score:1 },
+    { text:"没什么想换的", score:0 }
+  ]}
+];
+
+/* ---------------- 四型文案 ---------------- */
+var TYPES = {
+  hei: {
+    key:"hei", name:"蛋小黑 🖤", tag:"暗黑叛逆系 · 混乱中最清醒的那只",
+    quote:"「表面上我是咸鱼棒，但你不知道我挥棒的时候想的是什么。」",
+    need:"需要一个能让你展示真实一面的场景。你不是混子，你只是不屑于跟所有人一样。",
+    behavior:"乱斗里会找角落蹲到最后一秒再突然杀出；排位不硬追第一，因为你知道冠军不一定是最厉害的那个；跟蛋小黄是欢喜冤家，嘴上互怼但关键时刻一定站一起。",
+    identity:"你是 **蛋小黑**。在你的结果页里，'乱'这个字出现的频率会比别人多——不是因为你制造混乱，是因为你总能在混乱中找到自己的节奏。你不是最强的那个，但你绝对是最让人印象深刻的那个。",
+    accel:[
+      "下次乱斗试试全程只靠咸鱼棒和走位，不买任何道具。看看你能坚持多久不被淘汰——这才是你的真本事。",
+      "找蛋小黄（或者类似那种阳光直球型的朋友），让他拉你进一个满房派对厅。你只需要坐在角落听着就行，试试能不能在热闹里不觉得烦躁。",
+      "工坊里找一张你从没玩过的地图，花五分钟研究它的机关逻辑。然后在评论区写一句话——不用多，点明你发现的设计细节就好。"
+    ],
+    fit:"蛋小黄（欢喜冤家）、仔仔熊（稳得住你）、任何能理解你"不是装酷是真懒得解释"的蛋。"
+  },
+  huang: {
+    key:"huang", name:"蛋小黄 💛", tag:"热血直球系 · 走到哪亮到哪的小太阳",
+    quote:"「想那么多干嘛，冲就完了！」",
+    need:"需要一个能让你尽情发光的舞台。你不是冲动，你是把犹豫的时间都用来行动了。",
+    behavior:"排位赛开场第一个冲出去；乱斗里见到人就想刚；是全场最能带动气氛的那个，但有时候会因为太急而把自己也坑了；跟蛋小黑互怼但其实是最信任的伙伴。",
+    identity:"你是 **蛋小黄**。你的世界里没有"想太多"这四个字——想到就做，不喜欢就说，被阴了也不记仇，打完下一把还是开开心心的。这种性格在蛋仔世界里像一束小太阳，走到哪里都有人跟着你。唯一的问题是，有时候真的太急了——慢半拍不会死的。",
+    accel:[
+      "下一把排位故意慢三秒再出发，观察一下你前面那批蛋都在做什么。你会发现一些平时冲太快看不到的东西。",
+      "乱斗里忍住三把不先出手，等别人开打了你再决定站哪边。看看最后赢的是先动手的还是后动手的。",
+      "找蛋小黑（或者类似那种暗黑系的朋友），安静地跟他一起刷一把地图，不说话，就听听他会怎么玩。"
+    ],
+    fit:"蛋小黑（冤家路窄但离不开）、鸡块妹（温暖又不拖后腿）、任何能接住你的热情又能偶尔拉你一把的蛋。"
+  },
+  ji: {
+    key:"ji", name:"鸡块妹 🐥", tag:"温柔务实系 · 平民世界的隐形女神",
+    quote:"「我没有顶级皮肤，但我活得比谁都开心。」",
+    need:"需要被看见，但不需要被仰望。你最好的状态就是：自己开心，身边的蛋也开心。",
+    behavior:"没有至臻皮肤但永远穿着自己最喜欢的那件；组队时最会照顾新手；派对厅里最活跃；遇到大佬也不会怯场，遇到萌新也愿意带；是那种"大家都愿意跟她一起玩"的蛋。",
+    identity:"你是 **鸡块妹（淘气丸子）**。虎扑上有人说你是"唯一一个平民玩家也能拥有的女神皮"——这句话放在你身上特别准。你不是最厉害的，也不是最华丽的，但你是最舒服的蛋——跟你一起玩不会有压力，输了也不尴尬，赢了大家一起开心。这种能力在蛋仔世界里比任何至臻皮肤都值钱。",
+    accel:[
+      "下次进派对厅，主动加一个跟你等级差不多但不太说话的蛋为好友，下次约他一起刷。这种"平平淡淡"的联结往往最久。",
+      "找一张你已经玩熟的地图，带一个第一次玩的新手蛋，全程不说话只用动作教他。你会发现自己比想象中会带孩子。",
+      "截一张你穿最喜欢那件皮肤的照片，发到朋友圈说「今日份的鸡」——不用等赞，发出去就好。"
+    ],
+    fit:"仔仔熊（温柔+温柔=加倍温柔）、蛋小黄（你的阳光互补他的冲动）、任何懂得欣赏"舒服"比"厉害"更重要的蛋。"
+  },
+  zai: {
+    key:"zai", name:"仔仔熊 🐻", tag:"沉稳厚积系 · 软萌外表下的硬核韧性",
+    quote:"「我不是慢，我是在走稳。」",
+    need:"需要被鼓励。你不是没能力，你只是习惯了闷头做事，忘了抬头看看自己已经走到哪了。",
+    behavior:"排位不争第一但能稳定在中上；乱斗里不主动挑事但被盯上了也绝不软；最能忍的那只蛋——别人被阴一次就炸了，你被阴三次还在好好玩；喜欢自己刷地图慢慢玩，不急着结束。",
+    identity:"你是 **仔仔熊**。7.6 分的虎扑评分说明你在大家心里分量不轻——软萌的外表配着硬核的韧性，这种反差让你在蛋仔世界里特别招人喜欢。你不争不抢不搞事，但谁也拿不走属于你的东西。你可能不是朋友圈里最活跃的，但一定是最让人踏实的那只蛋。",
+    accel:[
+      "下次乱斗试着先出手一次——就一次。挑一个你觉得"好像可以"的时机，主动扔个道具试试。不用赢，就试试打破节奏。",
+      "找一张你最熟的地图，试着全程不抄近路，老老实实走完全程。你会发现原来慢下来能注意到这么多细节。",
+      "统计一下你最近一周在蛋仔里花的时间，看看是不是比你以为的多很多。你对这个世界的投入可能比你自己承认的要深。"
+    ],
+    fit:"鸡块妹（温柔合拍）、蛋小黑（他能拉着你"野"一次）、任何能让你偶尔打破节奏又不会让你觉得不舒服的蛋。"
+  }
+};
+
+/* ---------------- 维度文案 ---------------- */
+var DIMS = {
+  surprise: {
+    label:"应变",
+    low:"你在突发状况下会先懵一下，这不是慢半拍，是你需要一点时间来适应变化。但有时候蛋仔世界不给你这个时间——试试先反应再想。",
+    scenes:[
+      "被人从侧翼挤飞后，第一反应是"这把算我倒霉"。",
+      "看到新奇的工坊机关，直接退了。"
+    ],
+    high:"你在混乱里反而最清醒——这种能力在蛋仔世界里太值钱了。"
+  },
+  heartbeat: {
+    label:"情绪弹性",
+    low:"输赢对你的情绪影响比你以为的大。这不是坏事，说明你在乎——但在乎到影响了下一把的心情，就有点过了。",
+    scenes:[
+      "连跪三把直接不想玩了。",
+      "最后一秒被反超会真的生气。"
+    ],
+    high:"你的情绪弹性很好——输了能翻篇，赢了不膨胀，这种心态在排位里特别重要。"
+  },
+  crew: {
+    label:"联结",
+    low:"你更喜欢一个人玩。这没什么不好——只是蛋仔世界是个派对，偶尔走进去站一会，可能会有惊喜。",
+    scenes:[
+      "一个人刷地图比组队开心。",
+      "派对厅没人说话直接退了。"
+    ],
+    high:"你是天生的派对动物——走到哪哪就暖起来。但别忘了照顾一下自己"想独处"的需要。"
+  },
+  hidden: {
+    label:"暗面",
+    low:"你在蛋仔世界里和在现实里差不多，没什么特别想隐藏的。透明是好事，但偶尔也可以试试"不按套路出牌"。",
+    scenes:[
+      "现实和蛋仔里的你没区别。",
+      "没什么别人不知道的蛋仔爱好。"
+    ],
+    high:"你有自己的小世界——这让你成为蛋仔世界里最有意思的那类蛋。"
+  }
+};
+
+var DIM_ORDER = ["surprise","heartbeat","crew","hidden"];
+
+/* ---------------- 状态 ---------------- */
+var answers = new Array(8).fill(null);
+var orders = [];
+var current = 0;
+var els = {
+  cover: document.getElementById("s-cover"),
+  quiz: document.getElementById("s-quiz"),
+  result: document.getElementById("s-result"),
+  qNow: document.getElementById("qNow"),
+  qPct: document.getElementById("qPct"),
+  qFill: document.getElementById("pFill"),
+  qNo: document.getElementById("qNo"),
+  qText: document.getElementById("qText"),
+  opts: document.getElementById("opts"),
+  back: document.getElementById("backBtn"),
+  loading: document.getElementById("loading"),
+  resultBox: document.getElementById("result"),
+  resDate: document.getElementById("resDate"),
+  toast: document.getElementById("toast")
+};
+
+function shuffle(a){
+  for(var i=a.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var t = a[i]; a[i]=a[j]; a[j]=t;
+  }
+  return a;
+}
+
+function initOrders(){
+  orders = QUESTIONS.map(function(){ return shuffle([0,1,2]); });
+}
+
+function show(el){ el.hidden = false; }
+function hide(el){ el.hidden = true; }
+
+function startQuiz(){
+  answers = new Array(8).fill(null);
+  current = 0;
+  initOrders();
+  hide(els.cover);
+  hide(els.result);
+  show(els.quiz);
+  window.scrollTo(0,0);
+  renderQuestion();
+}
+
+function renderQuestion(){
+  var q = QUESTIONS[current];
+  els.qNow.textContent = current + 1;
+  var pct = Math.round(current / QUESTIONS.length * 100);
+  els.qPct.textContent = pct + "%";
+  els.qFill.style.width = pct + "%";
+  els.qNo.textContent = "Q" + ("0" + (current+1)).slice(-2);
+  els.qText.textContent = q.text;
+  els.back.disabled = current === 0;
+
+  var html = "";
+  orders[current].forEach(function(idx){
+    var o = q.options[idx];
+    var on = answers[current] === o.score ? " on" : "";
+    html += '<button class="opt'+on+'" data-score="'+o.score+'"><span class="dot"></span><span>'+o.text+'</span></button>';
+  });
+  els.opts.innerHTML = html;
+  window.scrollTo(0,0);
+}
+
+function choose(score){
+  answers[current] = score;
+  var nodes = els.opts.querySelectorAll(".opt");
+  for(var i=0;i<nodes.length;i++){
+    nodes[i].classList.toggle("on", Number(nodes[i].getAttribute("data-score")) === score);
+  }
+  var locked = true;
+  var idx = current;
+  setTimeout(function(){
+    if(!locked) return;
+    if(current !== idx) return;
+    if(current < QUESTIONS.length - 1){
+      current++;
+      renderQuestion();
+    } else {
+      finish();
+    }
+  }, 220);
+}
+
+els.opts.addEventListener("click", function(e){
+  var btn = e.target.closest(".opt");
+  if(!btn) return;
+  choose(Number(btn.getAttribute("data-score")));
+});
+
+els.back.addEventListener("click", function(){
+  if(current > 0){
+    current--;
+    renderQuestion();
+  }
+});
+
+/* ---------------- 计分 ---------------- */
+function calc(){
+  var coreRaw = 0, selfRaw = 0;
+  for(var i=0;i<4;i++) coreRaw += answers[i];
+  for(var j=4;j<8;j++) selfRaw += answers[j];
+  var core = Math.round(coreRaw / 8 * 100);
+  var self = Math.round(selfRaw / 8 * 100);
+  var vibe = Math.round((100 - self) * 0.5 + (100 - core) * 0.5);
+  var coreHigh = core >= 50, selfHigh = self >= 50;
+  var typeKey;
+  if(coreHigh && selfHigh) typeKey = "hei";
+  else if(coreHigh && !selfHigh) typeKey = "zai";
+  else if(!coreHigh && selfHigh) typeKey = "ji";
+  else typeKey = "huang";
+  return { core: core, self: self, vibe: vibe, type: TYPES[typeKey] };
+}
+function band(v){
+  if(v < 25) return "深藏不露";
+  if(v < 50) return "有点神秘";
+  if(v < 75) return "比较坦荡";
+  return "完全透明";
+}
+
+function finish(){
+  hide(els.quiz);
+  show(els.loading);
+  setTimeout(function(){
+    hide(els.loading);
+    renderResult();
+    show(els.result);
+    window.scrollTo(0,0);
+  }, 620);
+}
+
+/* ---------------- 结果渲染 ---------------- */
+function renderResult(){
+  var r = calc();
+  var t = r.type;
+  var d = new Date();
+  els.resDate.textContent = d.getFullYear() + "." + ("0"+(d.getMonth()+1)).slice(-2) + "." + ("0"+d.getDate()).slice(-2);
+  els.resultBox.innerHTML =
+    '<div class="hero t-'+t.key+'">'+
+      '<div class="you">你的蛋格是</div>'+
+      '<h1>'+t.name+'</h1>'+
+      '<p class="quote">'+t.quote+'</p>'+
+      '<p class="need"><b>蛋格画像：</b>'+t.identity+'</p>'+
+      '<div class="stats">'+
+        '<div class="stat"><div class="v">'+r.core+'<small>/100</small></div><div class="k">核心特质</div></div>'+
+        '<div class="stat"><div class="v">'+r.self+'<small>/100</small></div><div class="k">自我认同</div></div>'+
+        '<div class="stat"><div class="v">'+r.vibe+'<small>/100</small></div><div class="k">神秘指数</div></div>'+
+      '</div>'+
+      '<div class="savehint">⚜️ 截图这一页，就是你的蛋格鉴定卡。</div>'+
+    '</div>'+
+    '<div class="sec">'+
+      '<div class="sec-h"><h2>想知道更完整的画像？</h2><span class="tag">18 题完整版</span></div>'+
+      '<p class="lead">完整版还有四维维度、短板分析、三日实验清单、适合一起玩的蛋。</p>'+
+      '<button class="btn-copy" onclick="location.href=\''+CONFIG.fullUrl+'\'">去做完整版鉴定 ⚜️</button>'+
+    '</div>'+
+    '<div class="sec">'+
+      '<div class="sec-h"><h2>分享给朋友</h2><span class="tag">看看他是什么蛋</span></div>'+
+      '<p class="lead">把这个速测发给朋友，看看他是蛋小黑还是鸡块妹。</p>'+
+      '<button class="btn-copy" id="copyBtn">复制我的蛋格鉴定卡</button>'+
+    '</div>'+
+    '<div style="padding:14px 18px 0"><p class="disclaimer">本测试为粉丝创作的趣味性格探索工具，与网易蛋仔派对官方无关。</p></div>';
+  document.getElementById("copyBtn").addEventListener("click", copyManual);
+}
+function copyManual(){
+  var r = calc();
+  var t = r.type;
+  var text =
+    "我的蛋格鉴定卡 ⚜️\n"+
+    "我是「"+t.name+"」——"+t.quote.replace(/[「」『』]/g,"")+"\n"+
+    "核心特质 "+r.core+" / 自我认同 "+r.self+" / 神秘指数 "+r.vibe+"（"+band(r.vibe)+"）\n\n"+
+    "蛋格画像：\n"+t.identity+"\n\n"+
+    "三日实验清单：\n"+
+    t.accel.map(function(s,i){ return (i+1)+". "+s; }).join("\n")+"\n\n"+
+    "（来自「测测你是蛋仔派对里的哪只蛋」，粉丝趣味测试，非官方）";
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){ toast("已复制，可以发给蛋搭子了"); }, function(){ fallbackCopy(text); });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  var ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly","");
+  ta.style.position = "fixed";
+  ta.style.left = "-9999px";
+  document.body.appendChild(ta);
+  ta.select();
+  var ok = false;
+  try { ok = document.execCommand("copy"); } catch(e){ ok = false; }
+  document.body.removeChild(ta);
+  toast(ok ? "已复制，可以发给蛋搭子了" : "复制失败，请长按文字手动复制");
+}
+
+var toastTimer = null;
+function toast(msg){
+  els.toast.textContent = msg;
+  els.toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ els.toast.classList.remove("show"); }, 2200);
+}
+
+/* ---------------- 事件 ---------------- */
+document.getElementById("startBtn").addEventListener("click", startQuiz);
+document.getElementById("restartBtn").addEventListener("click", function(){
+  hide(els.result);
+  startQuiz();
+});
+</script>
+</body>
+</html>
